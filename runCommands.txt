@@ -1,0 +1,6 @@
+python mongo_import.py -c sales -i ../file.jl -u 'mongodb+srv://mongodb:Changeit.@mdmmongodbstudents.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000'
+python model.py -u 'mongodb+srv://mongodb:Changeit.@mdmmongodbstudents.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000'
+
+rCTzHgrp1rrb7BbXymmxgISqaSRONiGB9fV4haU8p/QXyFbvF4YvvXd/DyO2titL7LqcMkU+lH0X+AStMQF3dg==
+
+python save.py -c "DefaultEndpointsProtocol=https;AccountName=beerlfabzhaw;AccountKey=rCTzHgrp1rrb7BbXymmxgISqaSRONiGB9fV4haU8p/QXyFbvF4YvvXd/DyO2titL7LqcMkU+lH0X+AStMQF3dg==;EndpointSuffix=core.windows.net"
