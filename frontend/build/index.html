@@ -1,44 +1,43 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" href="./favicon.png" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		
-		<link rel="modulepreload" href="./_app/immutable/entry/start.MhuHwd1o.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/entry.wUeTfkRq.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/scheduler.zMJaRgub.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/app.LdwEzxIk.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index.aVnu3b9f.js">
-		<link rel="modulepreload" href="./_app/immutable/nodes/0.IU5AeOT3.js">
-		<link rel="modulepreload" href="./_app/immutable/nodes/2.EpqYNhCB.js">
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div style="display: contents">  <h1 data-svelte-h="svelte-e3ww2p">HikePlanner</h1> <p data-svelte-h="svelte-a64301">Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p> <button>Clicked 0 times</button> <p><strong data-svelte-h="svelte-4z8nqm">Abwärts [m]</strong> <label><input type="number" min="0" max="10000" value="0"> <input type="range" min="0" max="10000" value="0"></label></p> <p><strong data-svelte-h="svelte-12bkxll">Aufwärts [m]</strong> <label><input type="number" min="0" max="10000" value="0"> <input type="range" min="0" max="10000" value="0"></label></p> <p><strong data-svelte-h="svelte-gkflnq">Distanz [m]</strong> <label><input type="number" min="0" max="30000" value="0"> <input type="range" min="0" max="30000" value="0"></label></p> <button data-svelte-h="svelte-7qel70">Predict</button> <p></p> <table><tr><td data-svelte-h="svelte-1qjxbrr">Dauer:</td><td>n.a.</td></tr> <tr><td data-svelte-h="svelte-cb1clj">DIN33466:</td><td>n.a.</td></tr> <tr><td data-svelte-h="svelte-orpm3r">SAC:</td><td>n.a.</td></tr></table> 
-			
-			<script>
-				{
-					__sveltekit_1jpd85b = {
-						base: new URL(".", location).pathname.slice(0, -1)
-					};
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Prediction</title>
+</head>
+<body>
+    <h1>Sales Prediction</h1>
 
-					const element = document.currentScript.parentElement;
+    <p>
+        <strong>Last 12 Month Earnings:</strong>
+        <input type="number" id="last12MonthEarnings" min="0" max="100000" />
+    </p>
 
-					const data = [null,null];
+    <p>
+        <strong>Dollar Age:</strong>
+        <input type="number" id="dollarAge" min="0" max="100" />
+    </p>
 
-					Promise.all([
-						import("./_app/immutable/entry/start.MhuHwd1o.js"),
-						import("./_app/immutable/entry/app.LdwEzxIk.js")
-					]).then(([kit, app]) => {
-						kit.start(app, element, {
-							node_ids: [0, 2],
-							data,
-							form: null,
-							error: null
-						});
-					});
-				}
-			</script>
-		</div>
-	</body>
+    <button onclick="predict()">Predict</button>
+
+    <p>Predicted Price: <span id="predictedPrice">n.a.</span></p>
+
+    <script>
+        async function predict() {
+            let last12MonthEarnings = parseInt(document.getElementById("last12MonthEarnings").value);
+            let dollarAge = parseInt(document.getElementById("dollarAge").value);
+
+            let result = await fetch("/api/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ last12MonthEarnings, dollarAge })
+            });
+
+            let data = await result.json();
+            document.getElementById("predictedPrice").innerText = data.predictedPrice;
+        }
+    </script>
+</body>
 </html>

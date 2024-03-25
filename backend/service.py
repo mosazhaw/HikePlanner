@@ -21,7 +21,7 @@ if 'AZURE_STORAGE_CONNECTION_STRING' in os.environ:
     for container in containers:
         existingContainerName = container['name']
         print("checking container " + existingContainerName)
-        if existingContainerName.startswith("hikeplanner-model"):
+        if existingContainerName.startswith("saleprediction-model"):
             parts = existingContainerName.split("-")
             print(parts)
             suffix = 1
@@ -30,7 +30,7 @@ if 'AZURE_STORAGE_CONNECTION_STRING' in os.environ:
                 if (newSuffix > suffix):
                     suffix = newSuffix
 
-    container_client = blob_service_client.get_container_client("hikeplanner-model-" + str(suffix))
+    container_client = blob_service_client.get_container_client("saleprediction-model-" + str(suffix))
     blob_list = container_client.list_blobs()
     for blob in blob_list:
         print("\t" + blob.name)
@@ -52,35 +52,6 @@ file_path = Path(".", "../model/", "GradientBoostingRegressor.pkl")
 with open(file_path, 'rb') as fid:
     model = pickle.load(fid)
 
-print("*** Sample calculation with model ***")
-def din33466(uphill, downhill, distance):
-    km = distance / 1000.0
-    print(km)
-    vertical = downhill / 500.0 + uphill / 300.0
-    print(vertical)
-    horizontal = km / 4.0
-    print(horizontal)
-    return 3600.0 * (min(vertical, horizontal) / 2 + max(vertical, horizontal))
-
-def sac(uphill, downhill, distance):
-    km = distance / 1000.0
-    return 3600.0 * (uphill/400.0 + km /4.0)
-
-downhill = 300
-uphill = 700
-length = 10000
-max_elevation = 1200
-print("Downhill: " + str(downhill))
-print("Uphill: " + str(uphill))
-print("Length: " + str(length))
-demoinput = [[downhill,uphill,length,max_elevation]]
-demodf = pd.DataFrame(columns=['downhill', 'uphill', 'length_3d', 'max_elevation'], data=demoinput)
-demooutput = model.predict(demodf)
-time = demooutput[0]
-print("Our Model: " + str(datetime.timedelta(seconds=time)))
-print("DIN33466: " + str(datetime.timedelta(seconds=din33466(uphill=uphill, downhill=downhill, distance=length))))
-print("SAC: " + str(datetime.timedelta(seconds=sac(uphill=uphill, downhill=downhill, distance=length))))
-
 print("*** Init Flask App ***")
 app = Flask(__name__)
 cors = CORS(app)
@@ -90,19 +61,19 @@ app = Flask(__name__, static_url_path='/', static_folder='../frontend/build')
 def indexPage():
      return send_file("../frontend/build/index.html")  
 
-@app.route("/api/predict")
-def hello_world():
-    downhill = request.args.get('downhill', default = 0, type = int)
-    uphill = request.args.get('uphill', default = 0, type = int)
-    length = request.args.get('length', default = 0, type = int)
+# Prediction Endpoint
+@app.route("/api/predict", methods=['POST'])
+def predict():
+    # Get data from request
+    data = request.json
+    last12MonthEarnings = data['last12MonthEarnings']
+    dollarAge = data['dollarAge']
 
-    demoinput = [[downhill,uphill,length,0]]
-    demodf = pd.DataFrame(columns=['downhill', 'uphill', 'length_3d', 'max_elevation'], data=demoinput)
-    demooutput = model.predict(demodf)
-    time = demooutput[0]
+    # Prepare data for prediction
+    demo_input = [[last12MonthEarnings, dollarAge]]
+    demo_df = pd.DataFrame(columns=['last12MonthEarnings', 'dollarAge'], data=demo_input)
 
-    return jsonify({
-        'time': str(datetime.timedelta(seconds=time)),
-        'din33466': str(datetime.timedelta(seconds=din33466(uphill=uphill, downhill=downhill, distance=length))),
-        'sac': str(datetime.timedelta(seconds=sac(uphill=uphill, downhill=downhill, distance=length)))
-        })
+    # Make prediction
+    predictedPrice = model.predict(demo_df)[0]
+
+    return jsonify({'predictedPrice': predictedPrice})
