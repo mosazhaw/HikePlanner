@@ -1,4 +1,5 @@
 import scrapy
+from scrapy import Request
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -39,30 +40,24 @@ class GpxSpider(scrapy.Spider):
                 last12Mo = last12MoRow.find_element(By.CSS_SELECTOR, 'div > div:nth-child(2)').text
                 dollarAgeRow = table.find_element(By.CSS_SELECTOR, 'tr:nth-child(4)')
                 dollarAge = dollarAgeRow.find_element(By.CSS_SELECTOR, 'div > div:nth-child(2)').text
-                #price = priceDiv.find_element(By.CSS_SELECTOR, 'span:nth-child(1)').text
-                yield {'title': title,
-                       'price': price,
-                       'last12MonthEarnings': last12Mo,
-                       'dollarAge': dollarAge}
-                
 
-                # Click the button inside the current item
-                #button = item.find_element(By.TAG_NAME, 'button')
-                #button.click()
+                yield {
+                    'title': title,
+                    'price': price,
+                    'last12MonthEarnings': last12Mo,
+                    'dollarAge': dollarAge,
+                }
 
-                # Wait for the next page to load
-                #WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div.new-page-element')))
-                
-                # Extract additional information from the new page
-                #elements  = self.driver.find_element(By.CSS_SELECTOR, 'div.MuiPaper-root.jss1254.jss1249.jss1252').text
-                #for element in elements:
-                #    text = element.text.strip()  # Strip any leading or trailing whitespace
-                #    self.logger.info(f"Extracted text: {text}")
-                #    yield {'text': text}
-            
-            # Example of handling pagination
-            # next_button = self.driver.find_element(By.CSS_SELECTOR, 'a#NextLink')
-            # next_button.click()
+            # follow pagination links
+            # Find and click the next button
+            nav = self.driver.find_element(By.CSS_SELECTOR, 'nav.MuiPagination-root')
+            ul = nav.find_element(By.CSS_SELECTOR, 'ul.MuiPagination-ul')
+            li = ul.find_element(By.CSS_SELECTOR, 'li:nth-child(9)')
+            next_button = li.find_element(By.CSS_SELECTOR, 'button')
+            next_button.click()
+
+            # Extract data from the next page
+            yield Request(self.driver.current_url, callback=self.parse)
         except Exception as e:
             self.logger.error(f"An error occurred: {e}")
             raise CloseSpider(reason='Page structure changed or element not found')
