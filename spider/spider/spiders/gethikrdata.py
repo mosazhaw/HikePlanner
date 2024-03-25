@@ -1,4 +1,5 @@
 import scrapy
+import os
 from scrapy import Request
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -7,13 +8,18 @@ from scrapy.exceptions import CloseSpider
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 
+
 class GpxSpider(scrapy.Spider):
     name = 'gpx'
     start_urls = ['https://auctions.royaltyexchange.com/orderbook/past-deals/']
 
     def __init__(self):
         super(GpxSpider, self).__init__()
-        self.service = Service('C:/Users/Envy/Documents/chromedriver-win64/chromedriver.exe')
+        # Construct the relative path to chromedriver.exe
+        chrome_driver_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'chromeDriver', 'chromedriver-win64', 'chromedriver.exe')
+
+        # Initialize the Service object with the relative path
+        self.service = Service(chrome_driver_path)
         self.service.start()
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')  # Run Chrome in headless mode
