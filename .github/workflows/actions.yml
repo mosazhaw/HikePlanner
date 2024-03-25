@@ -19,7 +19,9 @@ jobs:
           cache: 'pip'
           
       - name: install python packages
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install selenium  # Install selenium module
           
       - name: scrape hikr data 
         working-directory: ./spider
