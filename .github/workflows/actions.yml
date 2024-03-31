@@ -2,7 +2,7 @@ name: Scrape Data, build and upload Model
 
 on:
   workflow_dispatch:
-
+ 
 jobs:
   build:
     runs-on: ubuntu-latest
