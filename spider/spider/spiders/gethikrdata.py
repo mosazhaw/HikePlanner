@@ -21,11 +21,6 @@ class GpxSpider(scrapy.Spider):
         # Initialize the WebDriver instance
         self.driver = None
 
-    def closed(self, reason):
-        # Quit the WebDriver instance if initialized
-        if self.driver:
-            self.driver.quit()
-
     def start_requests(self):
         # Initialize the WebDriver instance when starting the requests
         self.driver = webdriver.Chrome(options=self.options)

@@ -10,7 +10,7 @@ jobs:
     steps:
 
       - name: checkout repo content
-        uses: actions/checkout@v3 # checkout the repository content to github runner
+        uses: actions/checkout@v2 # checkout the repository content to github runner
 
       - name: setup python
         uses: actions/setup-python@v2
@@ -19,16 +19,6 @@ jobs:
 
       - name: install python packages
         run: pip install -r requirements.txt
-
-      #remove old Chorme version
-      - name: Removing previous chrome instances on runner 
-        run: sudo apt purge google-chrome-stable 
-
-      # Need to fetch reqs if needed
-      - name: Installing all necessary packages
-        run: pip install chromedriver-autoinstaller selenium pyvirtualdisplay
-      - name: Install xvfb
-        run: sudo apt-get install xvfb
 
       # Run the Scrapy spider
       - name: Scrape hikr data
