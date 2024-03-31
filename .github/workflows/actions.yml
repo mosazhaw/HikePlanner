@@ -21,16 +21,16 @@ jobs:
       - name: install python packages
         run: pip install -r requirements.txt
 
-      - name: Prepare Firefox and GeckoDriver
-        uses: browser-actions/setup-firefox@latest
+      - name: Prepare Chrome and ChromeDriver
+        uses: browser-actions/setup-chrome@latest
         
-      - name: install geckodriver
+      - name: install chromedriver
         run: |
-          wget https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz
-          tar -xvzf geckodriver-v0.34.0-linux64.tar.gz
-          chmod +x geckodriver
-          sudo mv geckodriver /usr/local/bin/
-          chmod +x /usr/local/bin/geckodriver # Ensure geckodriver is executable
+          wget https://chromedriver.storage.googleapis.com/99.0.4844.51/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          chmod +x chromedriver
+          sudo mv chromedriver /usr/local/bin/
+          chmod +x /usr/local/bin/chromedriver # Ensure chromedriver is executable
 
       - name: scrape hikr data 
         working-directory: ./spider
