@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from scrapy.exceptions import CloseSpider
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options  # Import Firefox options
 
 class GpxSpider(scrapy.Spider):
     name = 'gpx'
@@ -14,7 +15,7 @@ class GpxSpider(scrapy.Spider):
         super(GpxSpider, self).__init__()
         
         # Initialize options for Firefox WebDriver as instance variable
-        self.options = webdriver.FirefoxOptions()
+        self.options = Options()
         self.options.headless = True  # Run Firefox in headless mode
         
         # Initialize the WebDriver instance
