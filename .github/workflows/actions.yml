@@ -34,7 +34,7 @@ jobs:
           sudo apt-get install firefox -y
           export MOZ_HEADLESS=1
           FIREFOX_BINARY=$(which firefox)
-          python -c "from selenium import webdriver; options = webdriver.FirefoxOptions(); options.binary_location = '/usr/bin/firefox'; driver = webdriver.Firefox(options=options)"
+          python -c "from selenium import webdriver; options = webdriver.FirefoxOptions(); options.binary_location = '$FIREFOX_BINARY'; driver = webdriver.Firefox(options=options)"
           
       - name: scrape hikr data 
         working-directory: ./spider
