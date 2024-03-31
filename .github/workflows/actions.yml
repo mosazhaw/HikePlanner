@@ -15,28 +15,20 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.9' # Ensure you are using a compatible Python version
+          python-version: '3.12.1' # Ensure you are using a compatible Python version
 
       - name: install python packages
         run: pip install -r requirements.txt
 
-      # Install Chrome browser and ChromeDriver
-      - name: Install Chrome browser and ChromeDriver
-        run: |
-          sudo apt update
-          sudo apt install -y wget unzip xvfb libxi6 libgconf-2-4
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo apt install -y ./google-chrome-stable_current_amd64.deb
-          wget https://chromedriver.storage.googleapis.com/99.0.4844.51/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
-          chmod +x /usr/local/bin/chromedriver
+      #remove old Chorme version
+      - name: Removing previous chrome instances on runner 
+        run: sudo apt purge google-chrome-stable 
 
-      # Setup virtual display for headless browsing
-      - name: Setup virtual display
-        run: |
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          export DISPLAY=:99
+      # Need to fetch reqs if needed
+      - name: Installing all necessary packages
+        run: pip install chromedriver-autoinstaller selenium pyvirtualdisplay
+      - name: Install xvfb
+        run: sudo apt-get install xvfb
 
       # Run the Scrapy spider
       - name: Scrape hikr data
