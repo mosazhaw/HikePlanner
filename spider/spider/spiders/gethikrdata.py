@@ -22,7 +22,7 @@ class GpxSpider(scrapy.Spider):
     def parse(self, response):
         try:
             # Wait for the titles to be present
-            WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div.MuiPaper-root h2')))
+            WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div.MuiPaper-root h2')))
             
             # Extract titles and buttons
             listings = self.driver.find_elements(By.CSS_SELECTOR, 'div.MuiCard-root')
