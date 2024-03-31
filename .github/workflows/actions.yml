@@ -27,6 +27,7 @@ jobs:
           tar -xvzf geckodriver-v0.34.0-linux64.tar.gz
           chmod +x geckodriver
           sudo mv geckodriver /usr/local/bin/
+          chmod +x /usr/local/bin/geckodriver # Ensure geckodriver is executable
 
       - name: scrape hikr data 
         working-directory: ./spider
