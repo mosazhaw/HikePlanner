@@ -2,6 +2,8 @@ name: Scrape Data, build and upload Model
 
 on:
   push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -13,37 +15,51 @@ jobs:
         uses: actions/checkout@v3 # checkout the repository content to github runner
 
       - name: setup python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.12.1' # install the python version needed
-          cache: 'pip'
-          
+          python-version: '3.9' # Ensure you are using a compatible Python version
+
       - name: install python packages
         run: pip install -r requirements.txt
 
-      - name: Prepare Chrome and ChromeDriver
-        uses: browser-actions/setup-chrome@latest
-        
-      - name: install chromedriver
+      # Install Chrome browser and ChromeDriver
+      - name: Install Chrome browser and ChromeDriver
         run: |
+          sudo apt update
+          sudo apt install -y wget unzip xvfb libxi6 libgconf-2-4
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install -y ./google-chrome-stable_current_amd64.deb
           wget https://chromedriver.storage.googleapis.com/99.0.4844.51/chromedriver_linux64.zip
           unzip chromedriver_linux64.zip
-          chmod +x chromedriver
           sudo mv chromedriver /usr/local/bin/
-          chmod +x /usr/local/bin/chromedriver # Ensure chromedriver is executable
+          chmod +x /usr/local/bin/chromedriver
 
-      - name: scrape hikr data 
+      # Setup virtual display for headless browsing
+      - name: Setup virtual display
+        run: |
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          export DISPLAY=:99
+
+      # Run the Scrapy spider
+      - name: Scrape hikr data
         working-directory: ./spider
-        run: scrapy crawl gpx -s CLOSESPIDER_PAGECOUNT=50 -o file.jl
+        run: |
+          scrapy crawl gpx -s CLOSESPIDER_PAGECOUNT=50 -o file.jl
 
-      - name: upload data to mongodb
+      # Upload scraped data to MongoDB
+      - name: Upload data to MongoDB
         working-directory: spider/downloads
-        run: python ./mongo_import.py -c tracks -i ../file.jl -u "${{secrets.MONGODB_URI}}"
+        run: |
+          python ./mongo_import.py -c tracks -i ../file.jl -u "${{secrets.MONGODB_URI}}"
 
-      - name: build model
+      # Build model
+      - name: Build model
         working-directory: model
-        run: python ./model.py -u "${{secrets.MONGODB_URI}}"
+        run: |
+          python ./model.py -u "${{secrets.MONGODB_URI}}"
 
-      - name: upload model
+      # Upload model
+      - name: Upload model
         working-directory: model
-        run: python ./save.py -c "${{secrets.AZURE_STORAGE_CONNECTION_STRING}}"
+        run: |
+          python ./save.py -c "${{secrets.AZURE_STORAGE_CONNECTION_STRING}}"
