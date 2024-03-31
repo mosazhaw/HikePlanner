@@ -1,5 +1,4 @@
 import scrapy
-import os
 from scrapy import Request
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -14,16 +13,10 @@ class GpxSpider(scrapy.Spider):
     def __init__(self):
         super(GpxSpider, self).__init__()
         
-        # Construct the path to geckodriver.exe
-        gecko_driver_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'geckoDriver', 'geckodriver.exe')
-
         # Initialize options for Firefox WebDriver
         options = webdriver.FirefoxOptions()
         options.headless = True  # Run Firefox in headless mode
         
-        # Set the path to the GeckoDriver executable
-        os.environ["webdriver.gecko.driver"] = gecko_driver_path
-
         # Initialize the WebDriver instance
         self.driver = webdriver.Firefox(options=options)
 
