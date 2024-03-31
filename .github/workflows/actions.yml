@@ -21,10 +21,9 @@ jobs:
       - name: install python packages
         run: |
           pip install -r requirements.txt
-          pip install scrapy selenium
 
-      - name: Prepare Chrome and ChromeDriver
-        uses: browser-actions/setup-chrome@latest
+      #- name: Prepare Chrome and ChromeDriver
+      #  uses: browser-actions/setup-chrome@latest
 
       #- name: install chromedriver
       #  run: |
