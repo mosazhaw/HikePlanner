@@ -1,9 +1,6 @@
 name: Scrape Data, build and upload Model
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
