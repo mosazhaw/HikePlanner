@@ -19,13 +19,7 @@ jobs:
           cache: 'pip'
           
       - name: install python packages
-        run: |
-          pip install -r requirements.txt
-          pip install selenium  # Install selenium module
-
-      - name: Change ChromeDriver permissions
-        run: |
-          chmod +x ./chromeDriver/chromedriver-win64/chromedriver.exe
+        run: pip install -r requirements.txt
           
       - name: scrape hikr data 
         working-directory: ./spider

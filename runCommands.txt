@@ -1,3 +1,5 @@
+scrapy crawl gpx -s CLOSESPIDER_PAGECOUNT=10 -o file.jl
+
 python mongo_import.py -c sales -i ../file.jl -u 'mongodb+srv://mongodb:Changeit.@mdmmongodbstudents.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000'
 python model.py -u 'mongodb+srv://mongodb:Changeit.@mdmmongodbstudents.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000'
 

@@ -5,9 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from scrapy.exceptions import CloseSpider
-from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
-
 
 class GpxSpider(scrapy.Spider):
     name = 'gpx'
@@ -15,17 +13,22 @@ class GpxSpider(scrapy.Spider):
 
     def __init__(self):
         super(GpxSpider, self).__init__()
-        # Construct the relative path to chromedriver.exe
-        chrome_driver_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'chromeDriver', 'chromedriver-win64', 'chromedriver.exe')
+        
+        # Construct the path to geckodriver.exe
+        gecko_driver_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'geckoDriver', 'geckodriver.exe')
 
-        # Initialize the Service object with the relative path
-        self.service = Service(chrome_driver_path)
-        self.service.start()
-        options = webdriver.ChromeOptions()
-        options.add_argument('--headless')  # Run Chrome in headless mode
-        self.driver = webdriver.Remote(self.service.service_url, options=options)
+        # Initialize options for Firefox WebDriver
+        options = webdriver.FirefoxOptions()
+        options.headless = True  # Run Firefox in headless mode
+        
+        # Set the path to the GeckoDriver executable
+        os.environ["webdriver.gecko.driver"] = gecko_driver_path
+
+        # Initialize the WebDriver instance
+        self.driver = webdriver.Firefox(options=options)
 
     def closed(self, reason):
+        # Quit the WebDriver instance
         self.driver.quit()
 
     def parse(self, response):
@@ -34,7 +37,6 @@ class GpxSpider(scrapy.Spider):
             # Wait for the titles to be present
             WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div.MuiPaper-root h2')))
             
-
             # Extract titles and buttons
             listings = self.driver.find_elements(By.CSS_SELECTOR, 'div.MuiCard-root')
             for listing in listings:
@@ -54,7 +56,7 @@ class GpxSpider(scrapy.Spider):
                     'dollarAge': dollarAge,
                 }
 
-            # follow pagination links
+            # Follow pagination links
             # Find and click the next button
             nav = self.driver.find_element(By.CSS_SELECTOR, 'nav.MuiPagination-root')
             ul = nav.find_element(By.CSS_SELECTOR, 'ul.MuiPagination-ul')
