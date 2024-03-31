@@ -21,6 +21,9 @@ jobs:
       - name: install python packages
         run: pip install -r requirements.txt
 
+      - name: Prepare Firefox and GeckoDriver
+        uses: browser-actions/setup-firefox@latest
+        
       - name: install geckodriver
         run: |
           wget https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz
