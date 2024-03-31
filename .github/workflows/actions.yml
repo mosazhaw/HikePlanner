@@ -3,52 +3,56 @@ name: Scrape Data, build and upload Model
 on:
   push:
   workflow_dispatch:
- 
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
 
       - name: checkout repo content
-        uses: actions/checkout@v2 # checkout the repository content to github runner
+        uses: actions/checkout@v3 # checkout the repository content to github runner
 
       - name: setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.12.1' # Ensure you are using a compatible Python version
-
+          python-version: '3.12.1' # install the python version needed
+          cache: 'pip'
+          
       - name: install python packages
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install scrapy selenium
 
-      - name: Removing previous chrome instances on runner 
-        run: sudo apt purge google-chrome-stable  
-        
-       # Need to fetch reqs if needed
-      - name: Installing all necessary packages
-        run: pip install chromedriver-autoinstaller selenium pyvirtualdisplay
-      - name: Install xvfb
-        run: sudo apt-get install xvfb
+      - name: Prepare Chrome and ChromeDriver
+        uses: browser-actions/setup-chrome@latest
 
-      # Run the Scrapy spider
-      - name: Scrape hikr data
+      - name: install chromedriver
+        run: |
+          wget https://chromedriver.storage.googleapis.com/99.0.4844.51/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          chmod +x chromedriver
+          sudo mv chromedriver /usr/local/bin/
+          chmod +x /usr/local/bin/chromedriver # Ensure chromedriver is executable
+
+      - name: install Chrome
+        run: |
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo dpkg -i google-chrome-stable_current_amd64.deb
+          sudo apt-get install -f
+
+      - name: scrape hikr data 
         working-directory: ./spider
         run: |
           scrapy crawl gpx -s CLOSESPIDER_PAGECOUNT=50 -o file.jl
 
-      # Upload scraped data to MongoDB
-      - name: Upload data to MongoDB
+      - name: upload data to mongodb
         working-directory: spider/downloads
-        run: |
-          python ./mongo_import.py -c tracks -i ../file.jl -u "${{secrets.MONGODB_URI}}"
+        run: python ./mongo_import.py -c tracks -i ../file.jl -u "${{secrets.MONGODB_URI}}"
 
-      # Build model
-      - name: Build model
+      - name: build model
         working-directory: model
-        run: |
-          python ./model.py -u "${{secrets.MONGODB_URI}}"
+        run: python ./model.py -u "${{secrets.MONGODB_URI}}"
 
-      # Upload model
-      - name: Upload model
+      - name: upload model
         working-directory: model
-        run: |
-          python ./save.py -c "${{secrets.AZURE_STORAGE_CONNECTION_STRING}}"
+        run: python ./save.py -c "${{secrets.AZURE_STORAGE_CONNECTION_STRING}}"
