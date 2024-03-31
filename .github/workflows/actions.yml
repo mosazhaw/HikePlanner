@@ -20,6 +20,14 @@ jobs:
           
       - name: install python packages
         run: pip install -r requirements.txt
+
+      # Add step to set up Firefox in headless mode
+      - name: Set up Firefox in headless mode
+        run: |
+          sudo apt-get update
+          sudo apt-get install firefox -y
+          sudo apt-get install firefox-geckodriver
+          export MOZ_HEADLESS=1
           
       - name: scrape hikr data 
         working-directory: ./spider
