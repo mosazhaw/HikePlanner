@@ -13,9 +13,9 @@ class GpxSpider(scrapy.Spider):
     def __init__(self):
         super(GpxSpider, self).__init__()
         
-        # Initialize options for Firefox WebDriver
-        options = webdriver.FirefoxOptions()
-        options.headless = True  # Run Firefox in headless mode
+        # Initialize options for Firefox WebDriver as instance variable
+        self.options = webdriver.FirefoxOptions()
+        self.options.headless = True  # Run Firefox in headless mode
         
         # Initialize the WebDriver instance
         self.driver = None
@@ -27,7 +27,7 @@ class GpxSpider(scrapy.Spider):
 
     def start_requests(self):
         # Initialize the WebDriver instance when starting the requests
-        self.driver = webdriver.Firefox(options=options)
+        self.driver = webdriver.Firefox(options=self.options)
         yield Request(url=self.start_urls[0], callback=self.parse)
 
     def parse(self, response):
