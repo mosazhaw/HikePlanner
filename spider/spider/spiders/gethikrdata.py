@@ -18,14 +18,19 @@ class GpxSpider(scrapy.Spider):
         options.headless = True  # Run Firefox in headless mode
         
         # Initialize the WebDriver instance
-        self.driver = webdriver.Firefox(options=options)
+        self.driver = None
 
     def closed(self, reason):
-        # Quit the WebDriver instance
-        self.driver.quit()
+        # Quit the WebDriver instance if initialized
+        if self.driver:
+            self.driver.quit()
+
+    def start_requests(self):
+        # Initialize the WebDriver instance when starting the requests
+        self.driver = webdriver.Firefox(options=options)
+        yield Request(url=self.start_urls[0], callback=self.parse)
 
     def parse(self, response):
-        self.driver.get(response.url)
         try:
             # Wait for the titles to be present
             WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div.MuiPaper-root h2')))
