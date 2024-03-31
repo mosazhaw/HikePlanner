@@ -15,15 +15,20 @@ class GpxSpider(scrapy.Spider):
         chrome_options = Options()
         chrome_options.add_argument("--headless")
         self.driver = webdriver.Chrome(options=chrome_options)
+        self.driver.get('https://auctions.royaltyexchange.com/orderbook/past-deals/')  # Manually set the starting URL
+
 
     def closed(self, reason):
         self.driver.quit()
 
+    def start_requests(self):
+        for url in self.start_urls:
+            yield scrapy.Request(url, callback=self.parse)
+
     def parse(self, response):
         try:
-            # Wait for the titles to be present
-            WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div.MuiPaper-root h2')))
-            
+            WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div.MuiPaper-root h2')))
+
             # Extract titles and buttons
             listings = self.driver.find_elements(By.CSS_SELECTOR, 'div.MuiCard-root')
             for listing in listings:
@@ -50,6 +55,8 @@ class GpxSpider(scrapy.Spider):
             li = ul.find_element(By.CSS_SELECTOR, 'li:nth-child(9)')
             next_button = li.find_element(By.CSS_SELECTOR, 'button')
             next_button.click()
+
+            self.logger.info(f"Current URL after clicking next button: {self.driver.current_url}")  # Log the current URL after clicking next button
 
             # Extract data from the next page
             yield Request(self.driver.current_url, callback=self.parse)
