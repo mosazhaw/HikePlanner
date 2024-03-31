@@ -12,19 +12,12 @@ class GpxSpider(scrapy.Spider):
     start_urls = ['https://auctions.royaltyexchange.com/orderbook/past-deals/']
 
     def __init__(self):
-        super(GpxSpider, self).__init__()
-        
-        # Initialize options for Chrome WebDriver as instance variable
-        self.options = Options()
-        self.options.headless = True  # Run Chrome in headless mode
-        
-        # Initialize the WebDriver instance
-        self.driver = None
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        self.driver = webdriver.Chrome(options=chrome_options)
 
-    def start_requests(self):
-        # Initialize the WebDriver instance when starting the requests
-        self.driver = webdriver.Chrome(options=self.options)
-        yield Request(url=self.start_urls[0], callback=self.parse)
+    def closed(self, reason):
+        self.driver.quit()
 
     def parse(self, response):
         try:
