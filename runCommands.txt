@@ -1,8 +1,9 @@
-scrapy crawl gpx -s CLOSESPIDER_PAGECOUNT=10 -o file.jl
+scrapy crawl gpx -s CLOSESPIDER_PAGECOUNT=1 -o file.jl
 
-python mongo_import.py -c sales -i ../file.jl -u 'mongodb+srv://mongodb:Changeit.@mdmmongodbstudents.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000'
+python mongo_import.py -c sales -i ../spider/spiders/file.jl -u 'mongodb+srv://mongodb:Changeit.@mdmmongodbstudents.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000'
 python model.py -u 'mongodb+srv://mongodb:Changeit.@mdmmongodbstudents.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000'
 
+Azure connection strung:
 rCTzHgrp1rrb7BbXymmxgISqaSRONiGB9fV4haU8p/QXyFbvF4YvvXd/DyO2titL7LqcMkU+lH0X+AStMQF3dg==
 
 python save.py -c "DefaultEndpointsProtocol=https;AccountName=beerlfabzhaw;AccountKey=rCTzHgrp1rrb7BbXymmxgISqaSRONiGB9fV4haU8p/QXyFbvF4YvvXd/DyO2titL7LqcMkU+lH0X+AStMQF3dg==;EndpointSuffix=core.windows.net"
@@ -10,3 +11,23 @@ python save.py -c "DefaultEndpointsProtocol=https;AccountName=beerlfabzhaw;Accou
 
 $env:AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=beerlfabzhaw;AccountKey=rCTzHgrp1rrb7BbXymmxgISqaSRONiGB9fV4haU8p/QXyFbvF4YvvXd/DyO2titL7LqcMkU+lH0X+AStMQF3dg==;EndpointSuffix=core.windows.net"
 export AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=beerlfabzhaw;AccountKey=rCTzHgrp1rrb7BbXymmxgISqaSRONiGB9fV4haU8p/QXyFbvF4YvvXd/DyO2titL7LqcMkU+lH0X+AStMQF3dg==;EndpointSuffix=core.windows.net"
+
+flas locally start:
+cd backend
+python -m flask --debug --app service run
+
+Docker:
+Build:
+docker build -t fabianbeerli/royaltyexchange .
+
+run locally:
+docker run --name royaltyexchange -e AZURE_STORAGE_CONNECTION_STRING='DefaultEndpointsProtocol=https;AccountName=beerlfabzhaw;AccountKey=rCTzHgrp1rrb7BbXymmxgISqaSRONiGB9fV4haU8p/QXyFbvF4YvvXd/DyO2titL7LqcMkU+lH0X+AStMQF3dg==;EndpointSuffix=core.windows.net' -p 9001:80 -d fabianbeerli/royaltyexchange
+
+push auf docker hub 
+docker push fabianbeerli/royaltyexchange:latest
+
+azure rescource gruppe erstellen
+az group create --name mdm-royaltyexchange --location switzerlandnorth
+
+ACI deployment:
+az container create --resource-group mdm-royaltyexchange --name mdm-royaltyexchange --image fabianbeerli/royaltyexchange:latest --dns-name-label mdm-royaltyexchange --ports 80 --environment-variables 'AZURE_STORAGE_CONNECTION_STRING'='DefaultEndpointsProtocol=https;AccountName=mosazhaw;AccountKey=rCTzHgrp1rrb7BbXymmxgISqaSRONiGB9fV4haU8p/QXyFbvF4YvvXd/DyO2titL7LqcMkU+lH0X+AStMQF3dg==;EndpointSuffix=core.windows.net'
