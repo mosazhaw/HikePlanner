@@ -55,3 +55,14 @@ jobs:
       - name: upload model
         working-directory: model
         run: python ./save.py -c "${{secrets.AZURE_STORAGE_CONNECTION_STRING}}"
+
+      - name: build Docker image
+        run: docker build -t fabianbeerli/royaltyexchange:latest .
+
+      - name: Push Docker image to registry
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker push fabianbeerli/royaltyexchange:latest
+
+      - name: deploy to Azure Container Instances
+        run: az container create --resource-group mdm-royaltyexchange --name mdm-royaltyexchange --image fabianbeerli/royaltyexchange:latest --dns-name-label mdm-royaltyexchange --ports 80 --environment-variables AZURE_STORAGE_CONNECTION_STRING='${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}'

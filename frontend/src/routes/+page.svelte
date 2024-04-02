@@ -24,7 +24,7 @@
     }
 </script>
 
-<h1>Sales Prediction</h1>
+<h1>Price Prediction</h1>
 
 <p>
     <strong>Last 12 Month Earnings:</strong>
