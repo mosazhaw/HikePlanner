@@ -31,3 +31,6 @@ az group create --name mdm-royaltyexchange --location switzerlandnorth
 
 ACI deployment:
 az container create --resource-group mdm-royaltyexchange --name mdm-royaltyexchange --image fabianbeerli/royaltyexchange:latest --dns-name-label mdm-royaltyexchange --ports 80 --environment-variables 'AZURE_STORAGE_CONNECTION_STRING'='DefaultEndpointsProtocol=https;AccountName=mosazhaw;AccountKey=rCTzHgrp1rrb7BbXymmxgISqaSRONiGB9fV4haU8p/QXyFbvF4YvvXd/DyO2titL7LqcMkU+lH0X+AStMQF3dg==;EndpointSuffix=core.windows.net'
+
+
+az container create --resource-group mdm-royaltyexchange --name mdm-royaltyexchange --image fabianbeerli/royaltyexchange:latest --dns-name-label mdm-royaltyexchange --ports 80 --environment-variables AZURE_STORAGE_CONNECTION_STRING='DefaultEndpointsProtocol=https;AccountName=beerlfabzhaw;AccountKey=rCTzHgrp1rrb7BbXymmxgISqaSRONiGB9fV4haU8p/QXyFbvF4YvvXd/DyO2titL7LqcMkU+lH0X+AStMQF3dg==;EndpointSuffix=core.windows.net'
