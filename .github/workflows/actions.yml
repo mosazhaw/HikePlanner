@@ -64,5 +64,10 @@ jobs:
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
           docker push fabianbeerli/royaltyexchange:latest
 
-      - name: deploy to Azure Container Instances
-        run: az container create --resource-group mdm-royaltyexchange --name mdm-royaltyexchange --image fabianbeerli/royaltyexchange:latest --dns-name-label mdm-royaltyexchange --ports 80 --environment-variables AZURE_STORAGE_CONNECTION_STRING='${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}'
+      - name: deploy to Azure Web App 
+              id: deploy-to-webapp
+              uses: azure/webapps-deploy@v2
+              with:
+                app-name: ${{ env.AZURE_WEBAPP_NAME }}
+                publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+                images: 'fabianbeerli/royaltyexchange:latest'
