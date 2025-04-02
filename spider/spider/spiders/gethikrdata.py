@@ -6,7 +6,7 @@ import scrapy
 
 class GpxSpider(scrapy.Spider):
     name = 'gpx'
-    start_urls = ['http://www.hikr.org/filter.php?act=filter&a=ped&ai=100&aa=630']
+    start_urls = ['http://www.hikr.org/filter.php?act=filter&g=1&a=ped&ai=100&aa=630']
 
     def parse(self, response):
         for href in response.css('.content-list a::attr(href)'):
