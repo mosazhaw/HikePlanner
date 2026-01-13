@@ -39,13 +39,11 @@ similar dataset https://www.kaggle.com/datasets/roccoli/gpx-hike-tracks
 * Copy Frontend (prebuilt, TODO Build)
 * Azure Blob Storage: Zugriffsschlüssel als Umgebungsvariable
 
-## Update Requirements
+## Installation
 
-* Delete requirements.txt
-* Create .venv
-* pip install -r dev-requirements.in
-* pip-compile requirements.in
-* pip install -r requirements.txt
+* pyenv local 3.13.7
+* uv venv .venv
+* uv sync
 
 ## Ideas
 

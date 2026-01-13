@@ -2,7 +2,7 @@
 # docker build -t mosazhaw/hikeplanner .
 # docker run --name hikeplanner -e AZURE_STORAGE_CONNECTION_STRING='***' -p 9001:80 -d mosazhaw/hikeplanner
 
-FROM python:3.13.0
+FROM python:3.13.7
 
 # Copy Files
 WORKDIR /usr/src/app
