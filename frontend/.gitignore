@@ -9,3 +9,4 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 !/build
+static/images/heatmap.png
