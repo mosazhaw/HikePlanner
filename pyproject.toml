@@ -12,6 +12,7 @@ dependencies = [
   "pandas==2.2.3",
   "seaborn==0.13.2",
   "pymongo==4.10.1",
+  "python-dotenv==1.2.1",
   "argparse==1.4.0",
   "scikit-learn==1.5.2",
 ]
