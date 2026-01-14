@@ -161,3 +161,4 @@ cython_debug/
 # Project
 *.pkl
 data/gpx-data/
+backend/model/
