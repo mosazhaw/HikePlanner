@@ -159,6 +159,5 @@ cython_debug/
 #.idea/
 
 # Project
-spider/downloads/full/
-file.jl
 *.pkl
+data/gpx-data/
