@@ -1,5 +1,5 @@
 name: ModelOps (Update Model)
-# Requires GitHub Action Secrets: AZURE_STORAGE_CONNECTION_STRING, MONGODB_URI
+# Requires GitHub Action Secrets: AZURE_STORAGE_CONNECTION_STRING, MONGO_DB_CONNECTION_STRING
 
 on:
   # push:
@@ -27,13 +27,19 @@ jobs:
         run: scrapy crawl gpx -s CLOSESPIDER_PAGECOUNT=50 -o file.jl
 
       - name: upload data to mongodb
-        working-directory: spider/downloads
-        run: python ./mongo_import.py -c tracks -i ../file.jl -u "${{secrets.MONGODB_URI}}"
+        working-directory: data
+        env:
+          MONGO_DB_CONNECTION_STRING: ${{ secrets.MONGO_DB_CONNECTION_STRING }}
+        run: python ./transform-validate.py
 
       - name: build model
         working-directory: model
-        run: python ./model.py -u "${{secrets.MONGODB_URI}}"
+        env:
+          MONGO_DB_CONNECTION_STRING: ${{ secrets.MONGO_DB_CONNECTION_STRING }}
+        run: python ./train_model.py
 
       - name: upload model
         working-directory: model
-        run: python ./save.py -c "${{secrets.AZURE_STORAGE_CONNECTION_STRING}}"
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+        run: python ./publish_model.py
