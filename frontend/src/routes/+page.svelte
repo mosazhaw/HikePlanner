@@ -1,17 +1,22 @@
 ﻿<script>
-    import { dev } from "$app/environment";
-    let url = location.protocol + "//" + location.host;
-    if (dev) {
-        url = "http://localhost:5000";
+    import { browser, dev } from "$app/environment";
+    import { onMount } from "svelte";
+
+    let url = dev ? "http://localhost:5000" : "";
+    if (!dev && browser) {
+        url = location.protocol + "//" + location.host;
     }
 
-    let downhill = 0;
-    let uphill = 0;
-    let length = 0;
+    let downhill = 300;
+    let uphill = 700;
+    let length = 10000;
 
     let prediction = "n.a.";
+    let linearPrediction = "n.a.";
     let din33466 = "n.a.";
     let sac = "n.a.";
+
+    let debounceId;
 
     async function predict() {
         let result = await fetch(
@@ -29,8 +34,22 @@
         let data = await result.json();
         console.log(data);
         prediction = data.time;
+        linearPrediction = data.linear;
         din33466 = data.din33466;
         sac = data.sac;
+    }
+
+    onMount(() => {
+        predict();
+    });
+
+    function schedulePredict() {
+        if (debounceId) {
+            clearTimeout(debounceId);
+        }
+        debounceId = setTimeout(() => {
+            predict();
+        }, 300);
     }
 </script>
 
@@ -59,6 +78,7 @@
                                         bind:value={downhill}
                                         min="0"
                                         max="10000"
+                                        on:input={schedulePredict}
                                     />
                                 </div>
                                 <div class="col-8">
@@ -69,6 +89,7 @@
                                         min="0"
                                         max="10000"
                                         step="10"
+                                        on:input={schedulePredict}
                                     />
                                 </div>
                             </div>
@@ -84,6 +105,7 @@
                                         bind:value={uphill}
                                         min="0"
                                         max="10000"
+                                        on:input={schedulePredict}
                                     />
                                 </div>
                                 <div class="col-8">
@@ -94,6 +116,7 @@
                                         min="0"
                                         max="10000"
                                         step="10"
+                                        on:input={schedulePredict}
                                     />
                                 </div>
                             </div>
@@ -109,6 +132,7 @@
                                         bind:value={length}
                                         min="0"
                                         max="30000"
+                                        on:input={schedulePredict}
                                     />
                                 </div>
                                 <div class="col-8">
@@ -119,6 +143,7 @@
                                         min="0"
                                         max="30000"
                                         step="10"
+                                        on:input={schedulePredict}
                                     />
                                 </div>
                             </div>
@@ -136,30 +161,30 @@
             <div class="col-lg-6">
                 <div class="p-4 p-lg-5 bg-white shadow-sm rounded-4 h-100">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h2 class="h5 mb-0 fw-semibold">Ergebnisse</h2>
-                        <span class="badge text-bg-light">API</span>
+                        <h2 class="h5 mb-0 fw-semibold">Dauer</h2>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-sm align-middle">
                             <tbody>
                                 <tr>
-                                    <th scope="row" class="text-muted">Dauer (Modell)</th>
+                                    <th scope="row" class="text-muted">Model (Gradient Boosting Regressor)</th>
                                     <td class="fw-semibold">{prediction}</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row" class="text-muted">Dauer (DIN33466)</th>
+                                    <th scope="row" class="text-muted">Model (Linear Regression)</th>
+                                    <td class="fw-semibold">{linearPrediction}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-muted">DIN33466</th>
                                     <td class="fw-semibold">{din33466}</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row" class="text-muted">Dauer (SAC)</th>
+                                    <th scope="row" class="text-muted">SAC</th>
                                     <td class="fw-semibold">{sac}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <p class="small text-muted mb-0">
-                        Werte basieren auf deinen Eingaben und der aktuellen Modellversion.
-                    </p>
                 </div>
             </div>
         </div>
