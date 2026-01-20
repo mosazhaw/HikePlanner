@@ -62,6 +62,10 @@ def sac(uphill, downhill, distance):
     km = distance / 1000.0
     return 3600.0 * (uphill/400.0 + km /4.0)
 
+def timedelta_minutes(seconds):
+    rounded_minutes = int(round(seconds / 60.0))
+    return str(datetime.timedelta(minutes=rounded_minutes))
+
 print("\n*** Flask Backend ***")
 app = Flask(__name__)
 cors = CORS(app)
@@ -83,7 +87,7 @@ def hello_world():
     time = demooutput[0]
 
     return jsonify({
-        'time': str(datetime.timedelta(seconds=time)),
-        'din33466': str(datetime.timedelta(seconds=din33466(uphill=uphill, downhill=downhill, distance=length))),
-        'sac': str(datetime.timedelta(seconds=sac(uphill=uphill, downhill=downhill, distance=length)))
+        'time': timedelta_minutes(time),
+        'din33466': timedelta_minutes(din33466(uphill=uphill, downhill=downhill, distance=length)),
+        'sac': timedelta_minutes(sac(uphill=uphill, downhill=downhill, distance=length))
         })

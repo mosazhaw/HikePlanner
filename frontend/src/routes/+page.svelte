@@ -1,14 +1,8 @@
-<script>
+﻿<script>
     import { dev } from "$app/environment";
     let url = location.protocol + "//" + location.host;
     if (dev) {
         url = "http://localhost:5000";
-    }
-
-    let count = 0;
-
-    function increment() {
-        count++;
     }
 
     let downhill = 0;
@@ -40,51 +34,134 @@
     }
 </script>
 
-<h1>HikePlanner</h1>
-<p>
-    Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
-</p>
+<svelte:head>
+    <title>HikePlanner</title>
+</svelte:head>
 
-<button on:click={increment}>
-    Clicked {count}
-    {count === 1 ? "time" : "times"}
-</button>
+<div class="app-bg">
+    <main class="container py-5">
+        <div class="row g-4 align-items-start">
+            <div class="col-lg-6">
+                <div class="p-4 p-lg-5 bg-white shadow-sm rounded-4">
+                    <h1 class="display-6 fw-bold mb-2">HikePlanner</h1>
+                    <p class="text-muted mb-4">
+                        Schätze die Gehzeit basierend auf Distanz und Höhenmetern.
+                    </p>
 
-<p>
-    <strong>Abwärts [m]</strong>
-    <label>
-        <input type="number" bind:value={downhill} min="0" max="10000" />
-        <input type="range" bind:value={downhill} min="0" max="10000" />
-    </label>
-</p>
+                    <form class="vstack gap-3" on:submit|preventDefault={predict}>
+                        <div>
+                            <label class="form-label fw-semibold">Abwärts [m]</label>
+                            <div class="row g-2 align-items-center">
+                                <div class="col-4">
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        bind:value={downhill}
+                                        min="0"
+                                        max="10000"
+                                    />
+                                </div>
+                                <div class="col-8">
+                                    <input
+                                        type="range"
+                                        class="form-range"
+                                        bind:value={downhill}
+                                        min="0"
+                                        max="10000"
+                                        step="10"
+                                    />
+                                </div>
+                            </div>
+                        </div>
 
-<p>
-    <strong>Aufwärts [m]</strong>
-    <label>
-        <input type="number" bind:value={uphill} min="0" max="10000" />
-        <input type="range" bind:value={uphill} min="0" max="10000" />
-    </label>
-</p>
+                        <div>
+                            <label class="form-label fw-semibold">Aufwärts [m]</label>
+                            <div class="row g-2 align-items-center">
+                                <div class="col-4">
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        bind:value={uphill}
+                                        min="0"
+                                        max="10000"
+                                    />
+                                </div>
+                                <div class="col-8">
+                                    <input
+                                        type="range"
+                                        class="form-range"
+                                        bind:value={uphill}
+                                        min="0"
+                                        max="10000"
+                                        step="10"
+                                    />
+                                </div>
+                            </div>
+                        </div>
 
-<p>
-    <strong>Distanz [m]</strong>
-    <label>
-        <input type="number" bind:value={length} min="0" max="30000" />
-        <input type="range" bind:value={length} min="0" max="30000" />
-    </label>
-</p>
+                        <div>
+                            <label class="form-label fw-semibold">Distanz [m]</label>
+                            <div class="row g-2 align-items-center">
+                                <div class="col-4">
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        bind:value={length}
+                                        min="0"
+                                        max="30000"
+                                    />
+                                </div>
+                                <div class="col-8">
+                                    <input
+                                        type="range"
+                                        class="form-range"
+                                        bind:value={length}
+                                        min="0"
+                                        max="30000"
+                                        step="10"
+                                    />
+                                </div>
+                            </div>
+                        </div>
 
-<button on:click={predict}>Predict</button>
+                        <div class="d-grid">
+                            <button class="btn btn-primary btn-lg" type="submit">
+                                Predict
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-<p></p>
-<table>
-    <tr>
-        <td>Dauer (Modell):</td><td>{prediction}</td>
-    </tr>
-    <tr>
-        <td>Dauer (DIN33466):</td><td>{din33466}</td>
-    </tr>
-    <tr>
-        <td>Dauer (SAC):</td><td>{sac}</td>
-    </tr>
-</table>
+            <div class="col-lg-6">
+                <div class="p-4 p-lg-5 bg-white shadow-sm rounded-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h2 class="h5 mb-0 fw-semibold">Ergebnisse</h2>
+                        <span class="badge text-bg-light">API</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" class="text-muted">Dauer (Modell)</th>
+                                    <td class="fw-semibold">{prediction}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-muted">Dauer (DIN33466)</th>
+                                    <td class="fw-semibold">{din33466}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-muted">Dauer (SAC)</th>
+                                    <td class="fw-semibold">{sac}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="small text-muted mb-0">
+                        Werte basieren auf deinen Eingaben und der aktuellen Modellversion.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
