@@ -40,9 +40,9 @@
 
 <div class="app-bg">
     <main class="container py-5">
-        <div class="row g-4 align-items-start">
+        <div class="row g-4 align-items-start align-items-lg-stretch">
             <div class="col-lg-6">
-                <div class="p-4 p-lg-5 bg-white shadow-sm rounded-4">
+                <div class="p-4 p-lg-5 bg-white shadow-sm rounded-4 h-100">
                     <h1 class="display-6 fw-bold mb-2">HikePlanner</h1>
                     <p class="text-muted mb-4">
                         Schätze die Gehzeit basierend auf Distanz und Höhenmetern.
@@ -134,7 +134,7 @@
             </div>
 
             <div class="col-lg-6">
-                <div class="p-4 p-lg-5 bg-white shadow-sm rounded-4">
+                <div class="p-4 p-lg-5 bg-white shadow-sm rounded-4 h-100">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h2 class="h5 mb-0 fw-semibold">Ergebnisse</h2>
                         <span class="badge text-bg-light">API</span>
