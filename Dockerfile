@@ -4,14 +4,17 @@
 
 FROM python:3.13.7
 
-# Copy Files
+# Install uv and dependencies
 WORKDIR /usr/src/app
+COPY pyproject.toml uv.lock ./
+
+RUN pip install uv
+RUN uv sync --frozen --no-dev
+ENV PATH="/usr/src/app/.venv/bin:$PATH"
+
+# Copy application files
 COPY backend/app.py backend/app.py
 COPY frontend/build frontend/build
-
-# Install
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
 
 # Docker Run Command
 EXPOSE 80
