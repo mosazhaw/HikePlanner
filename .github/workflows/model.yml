@@ -31,6 +31,10 @@ jobs:
           AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         run: uv run python ./download_raw_data.py
 
+      - name: collect and curate GPX files
+        working-directory: data
+        run: uv run python ./collect-curate.py
+
       - name: upload data to mongodb
         working-directory: data
         env:
