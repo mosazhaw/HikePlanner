@@ -16,15 +16,20 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.13.0' # install the python version needed
+          python-version: '3.13.7' # install the python version needed
           cache: 'pip'
           
+      - name: install uv
+        uses: astral-sh/setup-uv@v3
+
       - name: install python packages
-        run: pip install -r requirements.txt
+        run: uv sync --frozen --all-extras
           
-      - name: scrape hikr data 
-        working-directory: ./spider
-        run: scrapy crawl gpx -s CLOSESPIDER_PAGECOUNT=50 -o file.jl
+      - name: download raw data
+        working-directory: data
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+        run: python ./download_raw_data.py
 
       - name: upload data to mongodb
         working-directory: data
