@@ -151,7 +151,7 @@
 
                         <div class="d-grid">
                             <button class="btn btn-primary btn-lg" type="submit">
-                                Predict
+                                Zeit vorhersagen
                             </button>
                         </div>
                     </form>
